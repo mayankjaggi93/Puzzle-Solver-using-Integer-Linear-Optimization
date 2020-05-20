@@ -1,0 +1,55 @@
+#model
+
+#parameters
+
+set dl;               #elements in the left diagonal
+set dr;               #elements in the right diagonal
+param N;			  #number of rows/columns
+param n;			  #total number of alphabets to be placed
+param ia;			  #row number of alphabet A
+param ja;			  #column number of alphabet A
+param t{j in 1..N} symbolic;   #hints at the top
+param b{j in 1..N};   #hints at the bottom
+param l{i in 1..N};	  #hints at the left
+param r{i in 1..N};	  #hints at the right
+
+#decision variable
+
+var x{h in 1..n, i in 0..N+1, j in 0..N+1} binary;   #binary decision variable, h indicates the alphabets, i row number and j column number 
+
+#obj function
+
+maximize Abcpath:
+0;
+
+#constraints
+
+subject to
+
+Position_A: x[1, ia, ja] = 1;                                          #alphabet A position given in the problem 
+
+Location_Constraint{h in 1..n-1, i in 1..N, j in 1..N}: x[h, i, j]+x[h+1,i,j]<= sum{e in -1..1, f in -1..1} x[h+1,i+e,j+f]; 					
+																	   #location condition, each alphabet can be in the 8 surrounding cells of previous alphabet cell 
+																	   #ensuring consecutive alphabet being next to each other
+											 
+One_Alphabet{i in 1..N, j in 1..N}: sum{h in 1..n} x[h, i, j] = 1;     #exactly one alphabet on each cell
+
+All_fill{h in 1..n}: sum{i in 1..N, j in 1..N} x[h, i, j] = 1;     	   #each alphabet is placed in some cell of the grid
+
+Zeroth_pos_column{h in 1..n, i in 0..N+1}: x[h, i, 0] = 0;             #no alphabet is in column number 0
+Zeroth_pos_row{h in 1..n, j in 0..N+1}: x[h, 0, j] = 0;				   #no alphabet is in row number 0	
+
+Sixth_pos_column{h in 1..n, i in 0..N+1}: x[h, i, N+1] = 0;			   #no alphabet is in column number N+1
+Sixth_pos_row{h in 1..n, j in 0..N+1}: x[h, N+1, j] = 0;			   #no alphabet is in row number N+1
+
+Top{j in 1..N}: sum{i in 1..N} x[t[j], i, j] = 1;                      #alphabets in the top hint are at the designated column
+Bottom{j in 1..N}: sum{i in 1..N} x[b[j], i, j] = 1;				   #alphabets in the bottom hint are at the designated column
+Left{i in 1..N}: sum{j in 1..N} x[l[i], i, j] = 1;                     #alphabets in the left hint are at the designated row
+Right{i in 1..N}: sum{j in 1..N} x[r[i], i, j] = 1;                    #alphabets in the right hint are at the designated row
+
+Diagonal_Left{h in dl}: sum{i in 1..N}x[h, i, i] = 1;                  #alphabets in the left diagonal are at the designated diagonal
+Diagonal_Right{h in dr}: sum{i in 1..N}x[h, i, N+1-i] = 1;			   #alphabets in the right diagonal are at the designated diagonal
+
+
+
+

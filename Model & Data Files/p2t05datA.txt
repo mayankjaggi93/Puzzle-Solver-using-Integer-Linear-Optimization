@@ -1,0 +1,39 @@
+#data
+
+#parameters and sets
+
+param N:= 5;	#number of rows/columns
+param n:= 25;   #total number of alphabets to be placed
+param ia:= 3;   #row number of alphabet A
+param ja:= 3;   #column number of alphabet A
+	  
+param t:=  1 I				#hints at the top
+		   2 F
+		   3 V
+		   4 N
+		   5 C;
+			 
+param b:=  1 8				#hints at the bottom
+		   2 11
+		   3 14
+		   4 18
+		   5 19;
+				
+param l:=  1 10				#hints at the left
+		   2 16
+		   3 23
+		   4 20
+		   5 4;
+			  
+param r:=  1 17				#hints at the right 
+		   2 13
+		   3 21
+		   4 7
+		   5 5;
+		  
+set dl:= 12, 2;       			#alphabets in the left diagonal
+				  
+set dr:= 24, 25;				#alphabets in the right diagonal
+
+check: n=N^2;                   #ensuring the relation between n and N 
+								#parameter is maintained

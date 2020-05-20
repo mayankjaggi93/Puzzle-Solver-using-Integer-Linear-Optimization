@@ -1,0 +1,37 @@
+
+#model 
+
+#parameters
+
+param S;									#Number of rows/columns in the grid (both have to be equal for a square matrix)
+param n;									#Invalid consecutive cells in a row/column
+param blue{i in 1..S,j in 1..S}; 			#Initial blue cells 
+param white{i in 1..S,j in 1..S};			#Initial white cells 
+
+#decision variables
+
+var y{i in 1..S,j in 1..S}, binary;      		#binary decision variable whose value is 1 if blue cell and 0 if white cell
+
+#objective function
+
+maximize colored_cells: 0;
+
+#constraints
+
+subject to
+
+ColInRow_Blue{i in 1..S, j in 1..S-(n-1)}: sum{k in 0..n-1} y[i, j+k] <= n-1;    #no more than n-1 consecutive blue cells in each row
+RowInCol_Blue{i in 1..S-(n-1), j in 1..S}: sum{k in 0..n-1} y[i+k, j] <= n-1;    #no more than n-1 consecutive blue cells in each column
+
+
+ColInRow_White{i in 1..S, j in 1..S-(n-1)}: sum{k in 0..n-1} y[i, j+k] >= 1;   	 #no more than n-1 consecutive white cells in each row
+RowInCol_White{i in 1..S-(n-1), j in 1..S}: sum{k in 0..n-1} y[i+k, j] >= 1;   	 #no more than n-1 consecutive white cells in each column
+
+
+Equal_Row{i in 1..S}: sum{j in 1..S} y[i,j] = S/2;       						 #each row has an equal number of blue and white cells
+Equal_Column{j in 1..S}: sum{i in 1..S} y[i,j]= S/2;    						 #each column has an equal number of blue and white cells
+
+
+Prefilled_Blue{i in 1..S,j in 1..S}: blue[i,j] <= y[i,j];                		 #if blue[i,j] is 1 then x[i,j] is 1
+Prefilled_White{i in 1..S,j in 1..S}: white[i,j] <= (1 - y[i,j]); 			   	 #if white[i,j] is 1 then y[i,j] is 1
+
